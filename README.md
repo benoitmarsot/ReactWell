@@ -1,6 +1,7 @@
 # React Well
 
-![img1](https://raw.githubusercontent.com/benoitmarsot/ReactWell/src/main/resources/static/readme.png)
+![img1](https://raw.githubusercontent.com/benoitmarsot/ReactWell/main/src/main/resources/static/readme.png
+
 This is a full-stack application that uses ReactJS as frontend and Java with Springboot as backend. The application uses Tomcat as a web server and PostgreSql as a database. The backend server uses Spring Web MVC for REST APIs.
 
 ## Description
