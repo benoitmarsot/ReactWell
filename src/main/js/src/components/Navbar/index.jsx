@@ -17,14 +17,14 @@ const Navbar = () => {
                     <NavLink to='/about' activestyle="true">
                         About
                     </NavLink>
-                    <NavLink to='/events' activestyle="true">
-                        Events
+                    <NavLink to='/createpatient' activestyle="true">
+                        Register patient
+                    </NavLink>
+                    <NavLink to='/selectpatient' activestyle="true">
+                        Select patient
                     </NavLink>
                     <NavLink to='/Assesment' activestyle="true">
                         Assesment
-                    </NavLink>
-                    <NavLink to='/team' activestyle="true">
-                        Teams
                     </NavLink>
                     <NavLink to='/blogs' activestyle="true">
                         Blogs

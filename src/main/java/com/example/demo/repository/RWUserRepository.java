@@ -4,16 +4,16 @@
  */
 package com.example.demo.repository;
 
-import com.example.demo.domain.DemoUser;
+import com.example.demo.domain.RWUser;
 import java.util.Optional;
 
 /**
  *
  * @author benoitmarsot
  */
-public interface DemoUserRepository {
-    Optional<DemoUser> registerUser(String DemoUserName, String OktaClientId);
-    Optional<DemoUser> findByUserName(String demoUserName);
-    Optional<DemoUser> findByOktaClientId(String DemoUserName, String OktaClientId);
+public interface RWUserRepository {
+    Optional<RWUser> registerUser(String DemoUserName, String OktaClientId);
+    Optional<RWUser> findByUserName(String demoUserName);
+    Optional<RWUser> findByOktaClientId(String DemoUserName, String OktaClientId);
     int countUser();
 }

@@ -1,21 +1,21 @@
 import React, {useState,setState} from 'react';
 import SelectUSState from 'react-select-us-states'
-import providerSvc from '../services/provider.js';
+import patientSvc from '../services/patient.js';
 
-import './signup.css';
+import './CreatePatient.css';
 
-const SignUp = () => {
+const CreatePatient = () => {
     const [firstName, setFirstName] = useState(null);
     const [lastName, setLastName] = useState(null);
-    const [company, setCompany] = useState(null);
+    const [referral, setReferral] = useState(null);
     const [address, setAddress] = useState(null);
     const [city, setCity] = useState(null);
     const [usState, setUsState] = useState(null);
     const [zip, setZip] = useState(null);
     const [email, setEmail] = useState(null);
-    const [password,setPassword] = useState(null);
-    const [confirmPassword,setConfirmPassword] = useState(null);
-    const [validate,setValidate] = useState({});
+    const [password, setPassword] = useState(null);
+    const [confirmPassword, setConfirmPassword] = useState(null);
+    const [validate, setValidate] = useState({});
 
     const handleInputChange = (e) => {
         const {id , value} = e.target;
@@ -25,9 +25,6 @@ const SignUp = () => {
         if(id === "lastName"){
             setLastName(value);
         }
-        if(id === "company"){
-            setCompany(value);
-        }
         if(id === "address"){
             setAddress(value);
         }
@@ -36,6 +33,9 @@ const SignUp = () => {
         }
         if(id === "zip"){
             setZip(value);
+        }
+        if(id === "referral"){
+            setReferral(value);
         }
         if(id === "email"){
             setEmail(value);
@@ -59,11 +59,13 @@ const SignUp = () => {
         if(Object.keys(validatePassword).length!==0||Object.keys(validatePassword).length!==0) {
             return;
         }
-        const provInfo={firstName:firstName,lastName:lastName,company:company,address:address,city:city,usState:usState,zip:zip, email:email,password:password};
-        providerSvc.register(provInfo).then(()=>{
-            console.log(provInfo);
-        }, (error) => {
-            return <div>{error.error}</div>;
+        const pInfo={firstName:firstName,lastName:lastName,
+            address:address,city:city,usState:usState,zip:zip,
+            referral:referral,email:email,password:password
+        };
+        const providerId=1;
+        patientSvc.register(providerId,pInfo).then(()=>{
+            console.log(pInfo);
         });
     }
 
@@ -84,14 +86,6 @@ const SignUp = () => {
                   </div>
                   <div className="col-75">
                     <input type="text" id="lastName" name="lastName" placeholder="Last name.." onChange={handleInputChange}/>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-25">
-                    <label htmlFor="company">Company (if any)</label>
-                  </div>
-                  <div className="col-75">
-                    <input type="text" id="company" name="company" placeholder="company.." onChange={handleInputChange}/>
                   </div>
                 </div>
                 <div className="row">
@@ -120,6 +114,14 @@ const SignUp = () => {
                   </div>
                   <div className="col-12">
                     <input type="text" id="zip" name="zip" placeholder="zip.." onChange={handleInputChange}/>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-25">
+                    <label htmlFor="referral">Referral</label>
+                  </div>
+                  <div className="col-75">
+                    <input type="text" id="referral" name="referral" placeholder="referral.." onChange={handleInputChange}/>
                   </div>
                 </div>
                 <div className="row">
@@ -155,4 +157,4 @@ const SignUp = () => {
     );
 };
 
-export default SignUp;
+export default CreatePatient;

@@ -6,6 +6,7 @@ package com.example.demo;
  */
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,16 +23,16 @@ public class WebSecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
             http
                 .authorizeHttpRequests((requests) -> requests
-                    .requestMatchers("/", "/home").permitAll()
-                    .anyRequest().authenticated()
+                    //.requestMatchers("/", "/home","/api/**").permitAll()
+                    .anyRequest().permitAll() //.authenticated()
                 )
-                .httpBasic(withDefaults())
-                .formLogin((form) -> form
-                    .loginPage("/login")
-                    .permitAll()
-                )
-                .logout((logout) -> logout.permitAll());
-
+//                .httpBasic(withDefaults())
+//                .formLogin((form) -> form
+//                    .loginPage("/login")
+//                    .permitAll()
+//                )
+//                .logout((logout) -> logout.permitAll());
+          .csrf().disable();
             return http.build();
 	}
 

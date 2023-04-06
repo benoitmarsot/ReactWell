@@ -19,7 +19,7 @@ public class DataSourceConfig {
     public DataSource getDataSource() {
         return DataSourceBuilder.create()
           .driverClassName("org.postgresql.Driver")
-          .url("jdbc:postgresql://localhost:5432/Demo")
+          .url("jdbc:postgresql://localhost:5432/reactwell")
           .username("benoitmarsot")
           //.password("")
           .build();	

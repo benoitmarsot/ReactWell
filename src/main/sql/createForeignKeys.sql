@@ -19,7 +19,7 @@ begin
 	end if;
 	if not exists (select constraint_name from information_schema.table_constraints where table_name = 'providerpatient' and constraint_name = 'providerpatient_fk_provider') then
 		raise notice 'Creating providerpatient_fk_provider...';
-		alter table providerpatient add constraint providerpatient_fk_provider foreign key (patientid) references provider(providerid);
+		alter table providerpatient add constraint providerpatient_fk_provider foreign key (providerid) references provider(providerid);
 	end if;
 	if not exists (select constraint_name from information_schema.table_constraints where table_name = 'assessment' and constraint_name = 'assessment_fk_provider') then
 		raise notice 'Creating assessment_fk_provider...';
@@ -47,6 +47,6 @@ begin
 	end if;
 end; $$;
 
-call sp_CreateForeignKeys();
-drop procedure sp_CreateForeignKeys;
+call public.sp_CreateForeignKeys();
+drop procedure public.sp_CreateForeignKeys;
 
