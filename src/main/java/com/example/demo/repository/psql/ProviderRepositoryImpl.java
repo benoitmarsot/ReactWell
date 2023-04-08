@@ -5,6 +5,7 @@
 package com.example.demo.repository.psql;
 
 import com.example.demo.domain.Assessment;
+import com.example.demo.domain.Credential;
 import com.example.demo.domain.Patient;
 import com.example.demo.domain.Provider;
 import com.example.demo.domain.RWUser;
@@ -72,6 +73,23 @@ public class ProviderRepositoryImpl implements ProviderRepository {
         jdbcTemplate.update(sql, 
             new Object[] {providerId,jsonPatient}
         );
+    }
+
+    @Override
+    public Optional<Provider> signin(Credential credential) throws JsonProcessingException {
+        ObjectMapper mapper=new ObjectMapper();
+        String json=mapper.writeValueAsString(credential);
+
+        String sql="select public.providersignin(?::json);";
+        String jsonProvider=jdbcTemplate.queryForObject(
+                sql, new Object[]{json}, String.class
+            );
+        if(jsonProvider==null) {
+            return Optional.empty();
+        }
+        ObjectMapper objectMapper = new ObjectMapper(); //.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);;
+        Provider provider=objectMapper.readValue(jsonProvider, Provider.class);
+        return Optional.of(provider);
     }
     
 

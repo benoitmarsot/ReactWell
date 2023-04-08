@@ -45,12 +45,12 @@ class About extends React.Component {
             </p>
             <h2>Features</h2>
             <ul>
-              <li>Securely auto-register new caregivers and patients</li>
-              <li>Enlist patients</li>
-              <li>Allow patient login to see the EHR and notes from the caregiver</li>
-              <li>Allow caregivers to create EHR assessments; each note can be associated with a precise body position using a 2D model</li>
-              <li>Keep track of assessment history over time; it allows patients and caregivers to see progress over time</li>
-              <li>Print present and past assessments</li>
+                <li>Securely auto-register new caregivers and patients</li>
+                <li>Enlist patients</li>
+                <li>Allow patient login to see the EHR and notes from the caregiver</li>
+                <li>Allow caregivers to create EHR assessments; each note can be associated with a precise body position using a 2D model</li>
+                <li>Keep track of assessment history over time; it allows patients and caregivers to see progress over time</li>
+                <li>Print present and past assessments</li>
             </ul>
             <h2>About the Creator</h2>
             <p>
@@ -59,6 +59,25 @@ class About extends React.Component {
                 Spring Security, ReactJS, and PostgreSQL. It was built to showcase 
                 his ability to create a full-stack application with current technologies.
             </p>    
+            <h2>About the stack</h2>
+            <p>
+                The front-end of the application is built using React, which allows for 
+                the creation of highly interactive and responsive user interfaces. 
+                The back-end of the application is built using PostgreSQL, a powerful 
+                and scalable open-source database management system. The application is
+                built using the Spring Boot framework, which allows for rapid development 
+                and easy deployment. Spring Security is used to add security features to
+                the application, such as user authentication and authorization. The demo
+                application showcases the combined capabilities of these technologies,
+                showcasing their strengths in terms of security, scalability, and user
+                experience.
+            </p><p>
+                Overall, React Well is a powerful and effective demonstration of the 
+                capabilities of React, Spring Security, PostgreSQL, and the Spring Boot 
+                framework. It provides a simple and user-friendly interface for interacting 
+                with a database, while also providing robust security features to protect 
+                sensitive data.
+            </p>
         </div>
     );
   }

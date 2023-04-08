@@ -1,6 +1,7 @@
 package com.example.demo.rest;
 
 import com.example.demo.domain.Assessment;
+import com.example.demo.domain.Credential;
 import com.example.demo.domain.Patient;
 import com.example.demo.domain.Provider;
 import java.util.Optional;
@@ -59,6 +60,17 @@ public class ProviderController {
     ) throws Exception {
         providerRepository.register(provider);
         return ResponseEntity.ok(true);
+    }
+    @PostMapping("/signin")
+    @CrossOrigin //allows the debuggging of vite Reat on port 5173
+    public ResponseEntity<Provider> signin(
+        @RequestBody Credential credential
+    ) throws Exception {
+        Optional<Provider> providerMaybe=providerRepository.signin(credential);
+        if(providerMaybe.isEmpty()) {
+            return null;
+        }
+       return ResponseEntity.ok(providerMaybe.get());
     }
     @PostMapping("/registerpatient")
     @CrossOrigin //allows the debuggging of vite Reat on port 5173

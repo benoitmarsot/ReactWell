@@ -1,4 +1,27 @@
 -- Functions
+-- provider sign in
+-- arg {email:un,password:pw}
+-- sample: select providersignin('{"email":"provemail@hotmail.com","password":"password"}');
+create or replace FUNCTION providersignin(json) 
+RETURNS json AS 
+$$
+    select json_build_object(
+        'providerId', p.providerid,
+        'rwuserId', p.rwuserid,
+        'firstName', p.firstname,
+        'lastName', p.lastname,
+        'company', p.company,
+        'address', p.address,
+        'city' , p.city
+        'usState', p.usstate
+        'zip', p.zip
+    )
+    from public.provider p
+        inner join public.rwuser u on p.rwuserid = u.rwuserid
+    where u.email=$1->>email and u.rwpassword=$1->>password
+    ;
+$$
+language sql;
 -- Get an assessment from a providerId and a patientId
 -- sample of use: select public.getassessment(1,1)
 create or replace FUNCTION getassessment(int,int) 

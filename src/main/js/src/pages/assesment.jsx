@@ -6,7 +6,6 @@ import bodyDiagram from '/images/bodydiagram.jpeg';
 
 class Assesment extends React.Component {
     constructor(props) {
-        
         super(props);
         this.state ={
             mousePos:{},
@@ -15,6 +14,8 @@ class Assesment extends React.Component {
             saved:false,
             curVersion: 0
         };
+        this.providerId=props.providerid;
+        this.patientId=props.patientid
         this.assessmentDoc=null;
         this.maxVersion=0;
         this.handleMove = (event) => {
@@ -32,8 +33,7 @@ class Assesment extends React.Component {
         };
         this.handleSubmit= (event) => {
             const assessDoc=this.buildAssesmentDoc();
-            const providerId=3, clientId=1;
-            assessmentSvc.putAssessment(providerId,clientId,assessDoc).then(() => {
+            assessmentSvc.putAssessment(this.providerId,this.patientId,assessDoc).then(() => {
                 //History needs to load the assessment after a save, it should be fix
                 this.loadAssessment();
                 this.setState({saved:true});
@@ -60,16 +60,14 @@ class Assesment extends React.Component {
             });
         }
         //Should add a note field
-        const assessDoc={'assessmentId':0,'providerId':3,'patientId':1,
+        const assessDoc={'assessmentId':0,'providerId':this.providerId,'patientId':this.patientId,
             'assessmentVersions':[{'assessmentVersionId':0,'note':'firstNote'}],
             'bodyQuestions': bodyQuestions
         };
         return assessDoc;
     }
     loadAssessment() {
-        //todo: should use provider id, client id
-        const providerId=3, clientId=1;
-        assessmentSvc.getAssessment(providerId,clientId).then( assDoc => {
+        assessmentSvc.getAssessment(this.providerId,this.patientId).then( assDoc => {
             this.assessmentDoc=assDoc;
             const lTexts=[];
             assDoc.bodyQuestions.forEach((bq)=>{

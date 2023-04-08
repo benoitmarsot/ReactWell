@@ -5,6 +5,7 @@
 package com.example.demo.repository;
 
 import com.example.demo.domain.Assessment;
+import com.example.demo.domain.Credential;
 import com.example.demo.domain.Patient;
 import com.example.demo.domain.Provider;
 import com.example.demo.domain.RWUser;
@@ -27,5 +28,6 @@ public interface ProviderRepository {
     boolean saveAssessment(int providerId, int patientId, Assessment assessment) throws JsonProcessingException;
 
     public void register(Provider provider) throws JsonProcessingException;
+    public Optional<Provider> signin(Credential credential) throws JsonProcessingException;
     public void registerPatient(int providerId, Patient patient) throws JsonProcessingException;
 }
