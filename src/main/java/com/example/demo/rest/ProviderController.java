@@ -45,21 +45,21 @@ public class ProviderController {
     }
     @PutMapping("/assessment")
     @CrossOrigin //allows the debuggging of vite Reat on port 5173
-    public ResponseEntity<Assessment> putAssement(
+    public ResponseEntity<Integer> putAssement(
         @RequestParam(value = "providerid", defaultValue = "1") int providerId,
         @RequestParam(value = "patientid", defaultValue = "1") int patientId,
         @RequestBody Assessment assessment
     ) throws Exception {
-        providerRepository.saveAssessment(providerId, patientId, assessment);
-        return ResponseEntity.ok(assessment);
+        int assesmentVersionId=providerRepository.saveAssessment(providerId, patientId, assessment);
+        return ResponseEntity.ok(assesmentVersionId);
     }
     @PostMapping("/register")
     @CrossOrigin //allows the debuggging of vite Reat on port 5173
-    public ResponseEntity<Boolean> register(
+    public ResponseEntity<Integer> register(
         @RequestBody Provider provider
     ) throws Exception {
-        providerRepository.register(provider);
-        return ResponseEntity.ok(true);
+        int providerId=providerRepository.register(provider);
+        return ResponseEntity.ok(providerId);
     }
     @PostMapping("/signin")
     @CrossOrigin //allows the debuggging of vite Reat on port 5173
@@ -74,11 +74,11 @@ public class ProviderController {
     }
     @PostMapping("/registerpatient")
     @CrossOrigin //allows the debuggging of vite Reat on port 5173
-    public ResponseEntity<Boolean> registerPatient(
+    public ResponseEntity<Integer> registerPatient(
         @RequestParam(value = "providerid", defaultValue = "1") int providerId,
         @RequestBody Patient patient
     ) throws Exception {
-        providerRepository.registerPatient(providerId,patient);
-        return ResponseEntity.ok(true);
+        int newPatientId=providerRepository.registerPatient(providerId,patient);
+        return ResponseEntity.ok(newPatientId);
     }
 }

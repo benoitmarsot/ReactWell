@@ -60,8 +60,8 @@ const SignUp = () => {
             return;
         }
         const provInfo={firstName:firstName,lastName:lastName,company:company,address:address,city:city,usState:usState,zip:zip, email:email,password:password};
-        providerSvc.register(provInfo).then(()=>{
-            console.log(provInfo);
+        providerSvc.register(provInfo).then((el)=>{
+            console.log("register new provider id: ",el);
         }, (error) => {
             return <div>{error.error}</div>;
         });

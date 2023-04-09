@@ -23,10 +23,7 @@ const SignUp = (props) => {
         const provInfo={email:email,password:password};
         providerSvc.signIn(provInfo).then((provider)=>{
             console.log(provider);
-            changePatient(patients[0].patientId);
-            useEffect(() => {
-                onChangeProvider(provider);
-            }, []);
+            onChangeProvider(provider);  
         }, (error) => {
             setErrorMsg(error.error);
         });

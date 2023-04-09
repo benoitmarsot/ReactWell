@@ -9,19 +9,13 @@ const SelectPatient = (props) => {
     }
     const changePatient=props.onChangePatient;
     const handleChange = (event) => {
-        useEffect(() => {
-            changePatient(event.target.key);
-          }, []);
-        
+        changePatient(event.target.value);
     };
     const patients=props.provider.patients;
-    if(patients.length === 1 ) {
-        useEffect(() => {
-            changePatient(patients[0].patientId);
-          }, []);
-        
-        
-    }
+    const patientId=props.patientid||patients[0].patientId;
+    useEffect(() => {
+        changePatient(patientId);
+    }, []);
     const po=[];
     for(let ind=0;ind<patients.length;ind++) {
         po.push((<option key={patients[ind].patientId} value={patients[ind].patientId}>
@@ -32,7 +26,7 @@ const SelectPatient = (props) => {
     return (
             <div>
                 <h2>Select a patient</h2>
-                <select onChange={handleChange}>
+                <select value={patientId} onChange={handleChange}>
                     {po}
                 </select>
             </div>

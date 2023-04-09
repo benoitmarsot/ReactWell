@@ -4,7 +4,7 @@ import providerSvc from '../services/provider.js';
 import assessmentSvc from '../services/assessment.js';
 import bodyDiagram from '/images/bodydiagram.jpeg';
 
-class Assesment extends React.Component {
+class Assessment extends React.Component {
     constructor(props) {
         super(props);
         this.state ={
@@ -18,6 +18,7 @@ class Assesment extends React.Component {
         this.patientId=props.patientid;
         this.assessmentDoc=null;
         this.maxVersion=0;
+        
         this.handleMove = (event) => {
             const c = document.getElementById("myCanvas");
             const rect = c.getBoundingClientRect();
@@ -28,7 +29,7 @@ class Assesment extends React.Component {
         this.handleClick = (event) => {
             this.setState({saved:false,bulletId:this.state.bulletId+1});
             const texts=this.state.texts;
-            texts[this.state.bulletId-1]={fromPos:{x:this.state.mousePos.x, y:this.state.mousePos.y}};
+            texts[this.state.bulletId]={fromPos:{x:this.state.mousePos.x, y:this.state.mousePos.y}};
             this.setState({texts:texts});
         };
         this.handleSubmit= (event) => {
@@ -70,6 +71,9 @@ class Assesment extends React.Component {
         assessmentSvc.getAssessment(this.providerId,this.patientId).then( assDoc => {
             this.assessmentDoc=assDoc;
             const lTexts=[];
+            if(!assDoc.bodyQuestions) {
+                return;
+            }
             assDoc.bodyQuestions.forEach((bq)=>{
                 const vId=(bq.versionTexts)?bq.versionTexts[0].assessmentVersionId:0;
                 this.maxVersion=vId>this.maxVersion?vId:this.maxVersion;
@@ -199,6 +203,7 @@ class Assesment extends React.Component {
         const image=new Image();
         image.src='/images/bodydiagram.jpeg';
         const c = document.getElementById("myCanvas");
+        if(!c) return;
         const ctx = c.getContext("2d");
         image.onload= ()=>{
             ctx.drawImage(image,0,0);
@@ -209,7 +214,7 @@ class Assesment extends React.Component {
 
     
     render() {
-        return (
+        return this.providerId?(
             <div>
                 <h1>Health Questionnaire</h1>
                 navigation: {this.Goto({direction:1})}{this.Goto({direction:-1})}
@@ -218,22 +223,37 @@ class Assesment extends React.Component {
                   {(Math.round( this.state.mousePos.x * 100) / 100).toFixed(2)},{(Math.round( this.state.mousePos.y * 100) / 100).toFixed(2)}
                 </b>
                 <br/>
-                <canvas id='myCanvas' 
-                    width='516' height='507'
-                    onMouseMove={this.handleMove} onClick={this.handleClick}
-                    style={{
-                        border:'1px solid #c3c3c3', backgroundColor:'#ffffff'
-                    }}
-                />
+                <table>
+                    <tbody>
+                        <tr><td>
+                            <canvas id='myCanvas' 
+                                width='516' height='507'
+                                onMouseMove={this.handleMove} onClick={this.handleClick}
+                                style={{
+                                    border:'1px solid #c3c3c3', backgroundColor:'#ffffff'
+                                }}
+                            />
+                        </td><td>
+                            Provider: {this.providerId}<br/>
+                            patient: {this.patientId}
+                        </td></tr>
+                    </tbody>
+                </table>
+
                 <this.showQuestions texts={this.state.texts} />
                 {this.DiagnosesQ({rowcount:this.state.bulletId,texts:this.state.texts})}
                 <this.DiagnosesA rowcount={this.state.bulletId} texts={this.state.texts}/>
                 <button onClick={this.handleSubmit} >Submit</button>
                 {this.showSaved()}
             </div>
+        ):(
+           <div>
+                <h1>Health Questionnaire</h1>
+                Please login first
+            </div>
         );
      
     }
 
 }
-export default Assesment;
+export default Assessment;

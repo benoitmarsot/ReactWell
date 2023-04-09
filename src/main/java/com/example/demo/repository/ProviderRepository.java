@@ -8,7 +8,6 @@ import com.example.demo.domain.Assessment;
 import com.example.demo.domain.Credential;
 import com.example.demo.domain.Patient;
 import com.example.demo.domain.Provider;
-import com.example.demo.domain.RWUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Optional;
 
@@ -23,11 +22,27 @@ public interface ProviderRepository {
      * @param providerId
      * @param patientId
      * @return
+     * @throws com.fasterxml.jackson.core.JsonProcessingException
      */
     Optional<Assessment> getAssessment(int providerId, int patientId) throws JsonProcessingException;
-    boolean saveAssessment(int providerId, int patientId, Assessment assessment) throws JsonProcessingException;
 
-    public void register(Provider provider) throws JsonProcessingException;
-    public Optional<Provider> signin(Credential credential) throws JsonProcessingException;
-    public void registerPatient(int providerId, Patient patient) throws JsonProcessingException;
+    /**
+     *
+     * @param providerId
+     * @param patientId
+     * @param assessment
+     * @return
+     * @throws com.fasterxml.jackson.core.JsonProcessingException
+     */
+    int saveAssessment(int providerId, int patientId, Assessment assessment) throws JsonProcessingException;
+
+    /**
+     *
+     * @param provider
+     * @return 
+     * @throws com.fasterxml.jackson.core.JsonProcessingException
+     */
+    int register(Provider provider) throws JsonProcessingException;
+    Optional<Provider> signin(Credential credential) throws JsonProcessingException;
+    int registerPatient(int providerId, Patient patient) throws JsonProcessingException;
 }

@@ -44,35 +44,38 @@ public class ProviderRepositoryImpl implements ProviderRepository {
     }
 
     @Override
-    public boolean saveAssessment(int providerId, int patientId, Assessment assessment) throws JsonProcessingException {
+    public int saveAssessment(int providerId, int patientId, Assessment assessment) throws JsonProcessingException {
         ObjectMapper mapper=new ObjectMapper();
         String jsonAssessment=mapper.writeValueAsString(assessment);
         String sql="call public.saveassessment(?,?,?::json)";
-        jdbcTemplate.update(sql, 
+        int assesVersionId=jdbcTemplate.queryForObject(sql, 
             new Object[] {providerId,patientId,jsonAssessment},
-            new int[] {java.sql.Types.INTEGER,java.sql.Types.INTEGER,java.sql.Types.VARCHAR}
+            Integer.class
         );
-        return true;
+        return assesVersionId;
     }
 
     @Override
-    public void register(Provider provider) throws JsonProcessingException {
+    public int register(Provider provider) throws JsonProcessingException {
         ObjectMapper mapper=new ObjectMapper();
         String jsonAssessment=mapper.writeValueAsString(provider);
         String sql="call public.registerprovider(?::json)";
-        jdbcTemplate.update(sql, 
-            new Object[] {jsonAssessment}
+        int providerId=jdbcTemplate.queryForObject(sql, 
+            new Object[] {jsonAssessment},
+            Integer.class
         );
+        return providerId;
     }
 
     @Override
-    public void registerPatient(int providerId, Patient patient) throws JsonProcessingException {
+    public int registerPatient(int providerId, Patient patient) throws JsonProcessingException {
         ObjectMapper mapper=new ObjectMapper();
         String jsonPatient=mapper.writeValueAsString(patient);
         String sql="call public.registerpatient(?,?::json)";
-        jdbcTemplate.update(sql, 
-            new Object[] {providerId,jsonPatient}
+        int patientId=jdbcTemplate.queryForObject(sql, 
+            new Object[] {providerId,jsonPatient}, Integer.class
         );
+        return patientId;
     }
 
     @Override

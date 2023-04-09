@@ -2,6 +2,8 @@
 -- provider sign in
 -- arg {email:un,password:pw}
 -- sample: select providersignin('{"email":"provemail@hotmail.com","password":"password"}');
+-- provider sign in
+-- arg {un,pw}
 create or replace FUNCTION providersignin(json) 
 RETURNS json AS 
 $$
@@ -12,13 +14,22 @@ $$
         'lastName', p.lastname,
         'company', p.company,
         'address', p.address,
-        'city' , p.city
-        'usState', p.usstate
-        'zip', p.zip
+        'city' , p.city,
+        'usState', p.usstate,
+        'zip', p.zip,
+        'email', u.email,
+        'patients', json_agg(json_build_object(
+        	'patientId',pp.patientid,
+        	'firstName',pa.firstname,
+        	'lastName',pa.lastname
+        ))
     )
     from public.provider p
         inner join public.rwuser u on p.rwuserid = u.rwuserid
-    where u.email=$1->>email and u.rwpassword=$1->>password
+        left join public.providerpatient pp on p.providerid=pp.providerid
+        left join public.patient pa on pp.patientid=pa.patientid 
+    where u.email=$1->>'email' and u.rwpassword=$1->>'password'
+    group by p.providerid, u.email
     ;
 $$
 language sql;
@@ -74,14 +85,14 @@ language sql;
 --      '{"assessmentId":0,"providerId":1,"patientId":1,"assessmentVersions":[{"assessmentVersionId":0,"note":"firstNote"}],"bodyQuestions":[{"bodyQuestionId":0,"x":140.609375,"y":123.90625,"versionTexts":[{"assessmentVersionId":0,"content":"This is it"}]},{"bodyQuestionId":1,"x":99.609375,"y":137.90625,"versionTexts":[{"assessmentVersionId":0,"content":"IS"}]},{"bodyQuestionId":2,"x":366.609375,"y":154.90625,"versionTexts":[{"assessmentVersionId":0,"content":"THIS"}]},{"bodyQuestionId":3,"x":380.609375,"y":234.90625,"versionTexts":[{"assessmentVersionId":0,"content":"IS IT"}]}]}'
 -- 	::JSON
 -- );
-create or replace procedure saveassessment(int,int,json) 
-as $$
+create or replace procedure saveassessment(
+    provId int,
+    pId int,
+    jsonAssess json,
+    inout assessVersionId int default null
+) as $$
 declare
-    provId alias FOR $1;
-    pId ALIAS FOR $2;
-    jsonAssess ALIAS FOR $3;
     assessId int;
-    assessVersionId int;
 begin
     -- make sure the provider and patient are right
     if not exists (select 1 from public.provider p where p.providerid=provId) then 
@@ -152,12 +163,12 @@ language plpgsql;
 -- call public.registerprovider(
 --     '{"providerId":0,"userId":0,"patients":null,"firstName":"Benoit","lastName":"Marsot","company":"unBumpkin","address":"4135 21ST ST","city":"SAN FRANCISCO","usState":"CA","zip":"94114","email":"benoitmarsot@hotmail.com","password":"test"}'::json
 -- )
-create or replace procedure registerprovider(json) 
-as $$
+create or replace procedure registerprovider(
+    jsonProv json,
+    inout provId int default null
+) as $$
 declare
-    jsonProv alias FOR $1;
     rwId int;
-   	provId int;
     email varchar(100);
 begin
     --check if the user is already registered
@@ -189,13 +200,13 @@ language plpgsql;
 -- )
 -- regiter a patient
 -- Example:
-create or replace procedure registerpatient(int,json) 
-as $$
+create or replace procedure registerpatient(
+	provId int,
+	jsonPatient json,
+	inout pId int default null
+) as $$
 declare
-    provId alias FOR $1;
-    jsonPatient alias FOR $2;
     rwId int;
-    pId int;
     email varchar(100);
 begin
     --check if the user is already registered
@@ -226,4 +237,5 @@ begin
 end
 $$
 language plpgsql;
+
 

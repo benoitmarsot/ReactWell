@@ -4,7 +4,7 @@ import patientSvc from '../services/patient.js';
 
 import './CreatePatient.css';
 
-const CreatePatient = () => {
+const CreatePatient = (props) => {
     const [firstName, setFirstName] = useState(null);
     const [lastName, setLastName] = useState(null);
     const [referral, setReferral] = useState(null);
@@ -17,6 +17,9 @@ const CreatePatient = () => {
     const [confirmPassword, setConfirmPassword] = useState(null);
     const [validate, setValidate] = useState({});
 
+    if(!props.providerid) {
+        return <div>Error: no provider</div>
+    }
     const handleInputChange = (e) => {
         const {id , value} = e.target;
         if(id === "firstName"){
@@ -51,6 +54,7 @@ const CreatePatient = () => {
     const changeUsState = (newUsState) => {
         setUsState(newUsState);
     }
+    const changePatient=props.onChangePatient;
 
     const handleSubmit  = () => {
         const validatePassword=(!password||password!==confirmPassword)?{ border:'2px solid #cc0000'}:{};
@@ -59,13 +63,17 @@ const CreatePatient = () => {
         if(Object.keys(validatePassword).length!==0||Object.keys(validatePassword).length!==0) {
             return;
         }
+        const handleChange = (event) => {
+            changePatient(event.target.value);
+        };
         const pInfo={firstName:firstName,lastName:lastName,
             address:address,city:city,usState:usState,zip:zip,
             referral:referral,email:email,password:password
         };
-        const providerId=1;
-        patientSvc.register(providerId,pInfo).then(()=>{
-            console.log(pInfo);
+        
+        patientSvc.register(props.providerid,pInfo).then((el)=>{
+            console.log(el);
+            changePatient(el);
         });
     }
 
