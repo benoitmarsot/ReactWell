@@ -9,7 +9,7 @@ class Assessment extends React.Component {
         super(props);
         this.state ={
             mousePos:{},
-            bulletId:1,
+            bulletId:0,
             texts:[],
             saved:false,
             curVersion: 0
@@ -27,10 +27,9 @@ class Assessment extends React.Component {
             this.setState( { mousePos: { x: x, y: y }});
         };
         this.handleClick = (event) => {
-            this.setState({saved:false,bulletId:this.state.bulletId+1});
             const texts=this.state.texts;
             texts[this.state.bulletId]={fromPos:{x:this.state.mousePos.x, y:this.state.mousePos.y}};
-            this.setState({texts:texts});
+            this.setState({texts:texts,saved:false,bulletId:this.state.bulletId+1});
         };
         this.handleSubmit= (event) => {
             const assessDoc=this.buildAssesmentDoc();
@@ -158,7 +157,10 @@ class Assessment extends React.Component {
             self.state.texts[event.target.name-1].assessmentVersionId=0;
             self.setState({saved:false,texts:self.state.texts});
         };
-        const rows=[];   
+        const rows=[]; 
+        if (!props.texts) {
+            return ;
+        }
         for(let ind=0;ind<props.texts.length;ind++) {
             const text=props.texts[ind].text||'';
             rows.push(<tr key={ind+1}>

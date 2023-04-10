@@ -37,10 +37,11 @@ begin
 		raise notice 'Creating bodyquestion_fk_assessment...';
 		alter table bodyquestion add constraint bodyquestion_fk_assessment foreign key (assessmentid) references assessment(assessmentid);
 	end if;
-	if not exists (select constraint_name from information_schema.table_constraints where table_name = 'bodyquestiontext' and constraint_name = 'bodyquestiontext_fk_bodyquestion') then
-		raise notice 'Creating bodyquestiontext_fk_bodyquestion...';
-		alter table bodyquestiontext add constraint bodyquestiontext_fk_bodyquestion foreign key (bodyquestionid) references bodyquestion(bodyquestionid);
-	end if;
+--      Actually no foreign key the key path is bodyQuestionText->AssessmentVersion->BodyQuestion
+-- 	if not exists (select constraint_name from information_schema.table_constraints where table_name = 'bodyquestiontext' and constraint_name = 'bodyquestiontext_fk_bodyquestion') then
+-- 		raise notice 'Creating bodyquestiontext_fk_bodyquestion...';
+-- 		alter table bodyquestiontext add constraint bodyquestiontext_fk_bodyquestion foreign key (bodyquestionid,assessmentid) references bodyquestion(bodyquestionid,assessmentid);
+-- 	end if;
 	if not exists (select constraint_name from information_schema.table_constraints where table_name = 'bodyquestiontext' and constraint_name = 'bodyquestiontext_fk_assessmentversion') then
 		raise notice 'Creating bodyquestiontext_fk_assessmentversion...';
 		alter table bodyquestiontext add constraint bodyquestiontext_fk_assessmentversion foreign key (assessmentversionid) references assessmentversion(assessmentversionid);

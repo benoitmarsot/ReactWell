@@ -31,7 +31,7 @@ begin
 	end if;
 	if not exists (select constraint_name from information_schema.table_constraints where table_name = 'bodyquestion' and constraint_type = 'PRIMARY KEY') then
             raise notice 'Create primary key for bodyquestion  (bodyquestionid).';
-            ALTER TABLE bodyquestion ADD PRIMARY KEY (bodyquestionid);
+            ALTER TABLE bodyquestion ADD PRIMARY KEY (bodyquestionid,assessmentid);
 	end if;
 	if not exists (select constraint_name from information_schema.table_constraints where table_name = 'bodyquestiontext' and constraint_type = 'PRIMARY KEY') then
             raise notice 'Create primary key for bodyquestiontext  (bodyquestionid,assessmentversionid).';
