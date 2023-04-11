@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author benoitmarsot
  */
 @RestController
+//@CrossOrigin(origins = "http://localhost:5173") //allows the debuggging of vite Reat on port 5173
 @RequestMapping("api/pro")
 public class ProviderController {
 
@@ -62,7 +63,7 @@ public class ProviderController {
         return ResponseEntity.ok(providerId);
     }
     @PostMapping("/signin")
-    @CrossOrigin //allows the debuggging of vite Reat on port 5173
+    @CrossOrigin
     public ResponseEntity<Provider> signin(
         @RequestBody Credential credential
     ) throws Exception {
@@ -73,7 +74,7 @@ public class ProviderController {
        return ResponseEntity.ok(providerMaybe.get());
     }
     @PostMapping("/registerpatient")
-    @CrossOrigin //allows the debuggging of vite Reat on port 5173
+    @CrossOrigin
     public ResponseEntity<Integer> registerPatient(
         @RequestParam(value = "providerid", defaultValue = "1") int providerId,
         @RequestBody Patient patient

@@ -38,7 +38,7 @@ function App() {
     const providerId=(provider)?provider.providerId:0;
     return (
         <Router>
-            <Navbar />
+            <Navbar  patientid={patientId} providerid={providerId} />
             <Routes>
                 <Route path='/' element={<Home/>} />
                 <Route path='/about' element={<About/>} />

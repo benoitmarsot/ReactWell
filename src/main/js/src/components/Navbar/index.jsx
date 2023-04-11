@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState, React} from 'react';
 import {
     Nav,
     NavLink,
@@ -8,7 +8,10 @@ import {
     NavBtnLink,
 } from './NavbarElements';
 
-const Navbar = () => {
+const Navbar = (props) => {
+	const providerId=props.providerid;
+	const patientId=props.patientid;
+	
     return (
 	<>
             <Nav>
@@ -17,15 +20,20 @@ const Navbar = () => {
                     <NavLink to='/about' activestyle="true">
                         About
                     </NavLink>
-                    <NavLink to='/createpatient' activestyle="true">
-                        Register patient
-                    </NavLink>
-                    <NavLink to='/selectpatient' activestyle="true">
-                        Select patient
-                    </NavLink>
-                    <NavLink to='/Assesment' activestyle="true">
-                        Assesment
-                    </NavLink>
+					{providerId? (
+						<>
+		                    <NavLink to='/createpatient' activestyle="true">
+		                        Register patient
+		                    </NavLink>
+		                    <NavLink to='/selectpatient' activestyle="true">
+		                        Select patient
+		                    </NavLink>
+		                    <NavLink to='/Assesment' activestyle="true">
+		                        Assesment
+		                    </NavLink>
+						</>
+						):''
+					}
                     <NavLink to='/blogs' activestyle="true">
                         Blogs
                     </NavLink>
