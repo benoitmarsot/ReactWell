@@ -32,7 +32,7 @@ const SignUp = (props) => {
         return props.errorMsg
             ?(<div>{props.errorMsg}</div>)
             :'';
-    }
+    };
 
     return (
         <div className="form">

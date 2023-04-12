@@ -8,7 +8,7 @@ import CreatePatient from './pages/createPatient.jsx';
 import AnnualReport from './pages/annual.jsx';
 import Assesment from './pages/assessment.jsx';
 import SelectPatient from './pages/selectPatient.jsx';
-import Blogs from './pages/blogs.jsx';
+import Profile from './pages/profile.jsx';
 import SignUp from './pages/signup.jsx';
 import SignIn from './pages/signin.jsx';
 
@@ -46,7 +46,7 @@ function App() {
                 <Route path='/Assesment' element={<Assesment providerid={providerId} patientid={patientId} />} />
                 <Route path='/annual' element={<AnnualReport/>} />
                 <Route path='/selectpatient' element={<SelectPatient onChangePatient={changePatient} provider={provider} patientid={patientId} />} />
-                <Route path='/blogs' element={<Blogs/>} />
+                <Route path='/profile' element={<Profile provider={provider} />} />
                 <Route path='/sign-up' element={<SignUp onChangeProvider={changeProvider} />} />
                 <Route path='/signin' element={<SignIn onChangeProvider={changeProvider} />} />
             </Routes>

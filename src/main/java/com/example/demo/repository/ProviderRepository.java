@@ -45,4 +45,5 @@ public interface ProviderRepository {
     int register(Provider provider) throws JsonProcessingException;
     Optional<Provider> signin(Credential credential) throws JsonProcessingException;
     int registerPatient(int providerId, Patient patient) throws JsonProcessingException;
+    int updateProvider(Provider provider) throws JsonProcessingException;
 }

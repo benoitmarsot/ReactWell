@@ -82,4 +82,12 @@ public class ProviderController {
         int newPatientId=providerRepository.registerPatient(providerId,patient);
         return ResponseEntity.ok(newPatientId);
     }
+    @PostMapping("/updateprovider")
+    @CrossOrigin //allows the debuggging of vite Reat on port 5173
+    public ResponseEntity<Integer> updateprovider(
+        @RequestBody Provider provider
+    ) throws Exception {
+        int providerId=providerRepository.updateProvider(provider);
+        return ResponseEntity.ok(providerId);
+    }
 }

@@ -19,9 +19,9 @@ $$
         'zip', p.zip,
         'email', u.email,
         'patients', json_agg(json_build_object(
-        	'patientId',pp.patientid,
-        	'firstName',pa.firstname,
-        	'lastName',pa.lastname
+            'patientId',pp.patientid,
+            'firstName',pa.firstname,
+            'lastName',pa.lastname
         ))
     )
     from public.provider p
@@ -237,5 +237,35 @@ begin
 end
 $$
 language plpgsql;
-
-
+-- update a provider profile
+-- Example:
+--  call public.updateprovider(
+--     '{"providerId":1,"firstName":"Benoit","lastName":"Marsot","company":"unBumpkin","address":"4135 21ST ST","city":"SAN FRANCISCO","usState":"CA","zip":"94114","password":"test"}'::json
+-- )
+create or replace procedure updateprovider(
+    jsonProv json,
+    inout provId int default null
+) as $$
+declare
+    rwId int;
+    email varchar(100);
+begin
+    --check if the user is already registered
+    select p.rwuserid, p.providerid into rwId, provId
+    from public.rwuser u
+        inner join public.provider p on p.rwuserid=u.rwuserid
+    where p.providerid =cast(jsonProv->>'providerId' as int);
+    if rwId is null then 
+        raise exception 'User id % does not exist.', jsonProv->>'providerId';
+    end if;
+    -- update the provider
+    update public.provider set (
+        firstname, lastname, company, address, city, usstate, zip
+    ) = (
+        jsonProv->>'firstName',jsonProv->>'lastName',jsonProv->>'company',
+        jsonProv->>'address',jsonProv->>'city', jsonProv->>'usState',jsonProv->>'zip'
+    ) where providerid=provId and rwuserid=rwId;
+    raise notice 'Created user: % provider: % with email: %', rwId,provId, jsonProv->>'email';
+end
+$$
+language plpgsql;

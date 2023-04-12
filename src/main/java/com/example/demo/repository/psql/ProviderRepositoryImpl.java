@@ -94,6 +94,16 @@ public class ProviderRepositoryImpl implements ProviderRepository {
         Provider provider=objectMapper.readValue(jsonProvider, Provider.class);
         return Optional.of(provider);
     }
-    
+    @Override
+    public int updateProvider(Provider provider) throws JsonProcessingException {
+        ObjectMapper mapper=new ObjectMapper();
+        String json=mapper.writeValueAsString(provider);
+        String sql="call public.updateprovider(?::json)";
+        int providerId=jdbcTemplate.queryForObject(sql, 
+            new Object[] {json},
+            Integer.class
+        );
+        return providerId;
+    }
 
 }
