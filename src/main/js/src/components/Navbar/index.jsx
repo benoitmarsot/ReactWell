@@ -28,11 +28,14 @@ const Navbar = (props) => {
 							<NavLink to='/selectpatient' activestyle="true">
 								Select patient
 							</NavLink>
-							{patientId?
-								<NavLink to='/Assesment' activestyle="true">
+							{patientId? ( <>
+								<NavLink to='/updatepatient' activestyle="true">
+									Update patient
+								</NavLink>
+								<NavLink to='/assesment' activestyle="true">
 									Assesment
 								</NavLink>
-							:''}
+							</>):''}
 							<NavLink to='/profile' activestyle="true">
 								Profile
 							</NavLink>

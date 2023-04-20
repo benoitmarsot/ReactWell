@@ -2,8 +2,6 @@
 -- provider sign in
 -- arg {email:un,password:pw}
 -- sample: select providersignin('{"email":"provemail@hotmail.com","password":"password"}');
--- provider sign in
--- arg {un,pw}
 create or replace FUNCTION providersignin(json) 
 RETURNS json AS 
 $$
@@ -30,6 +28,31 @@ $$
         left join public.patient pa on pp.patientid=pa.patientid 
     where u.email=$1->>'email' and u.rwpassword=$1->>'password'
     group by p.providerid, u.email
+    ;
+$$
+language sql;
+-- get patient id
+-- args: 
+-- - patientId: patient id integer
+-- sample: select getpatient(1);
+create or replace FUNCTION getpatient(pId int ) 
+RETURNS json AS 
+$$
+    select json_build_object(
+        'patientId', p.patientid,
+        'userId', p.rwuserid,
+        'firstName', p.firstname,
+        'lastName', p.lastname,
+        'address', p.address,
+        'city' , p.city,
+        'usState', p.usstate,
+        'zip', p.zip,
+        'referral', p.referral,
+        'email', u.email
+    )
+    from public.patient p
+        inner join public.rwuser u on p.rwuserid = u.rwuserid
+    where p.patientid=pId
     ;
 $$
 language sql;
@@ -250,13 +273,13 @@ declare
     rwId int;
     email varchar(100);
 begin
-    --check if the user is already registered
+    --check if the provider exists
     select p.rwuserid, p.providerid into rwId, provId
     from public.rwuser u
         inner join public.provider p on p.rwuserid=u.rwuserid
     where p.providerid =cast(jsonProv->>'providerId' as int);
     if rwId is null then 
-        raise exception 'User id % does not exist.', jsonProv->>'providerId';
+        raise exception 'Provider id % does not exist.', jsonProv->>'providerId';
     end if;
     -- update the provider
     update public.provider set (
@@ -265,7 +288,35 @@ begin
         jsonProv->>'firstName',jsonProv->>'lastName',jsonProv->>'company',
         jsonProv->>'address',jsonProv->>'city', jsonProv->>'usState',jsonProv->>'zip'
     ) where providerid=provId and rwuserid=rwId;
-    raise notice 'Created user: % provider: % with email: %', rwId,provId, jsonProv->>'email';
+    raise notice 'Upadated user: % provider: % with email: %', rwId,provId, jsonProv->>'email';
+end
+$$
+language plpgsql;
+-- update a patient profile
+-- Example:
+--  call public.updatepatient(
+--     '{"providerId":1,"firstName":"Benoit","lastName":"Marsot","company":"unBumpkin","address":"4135 21ST ST","city":"SAN FRANCISCO","usState":"CA","zip":"94114","password":"test"}'::json
+--     ,1
+-- )
+create or replace procedure updatepatient(
+    jsonPatient json,
+    inout pId int default null
+) as $$
+begin
+    -- check if the patient exist
+    if not exists ( select 1 from public.patient where patientid=pId ) then 
+        raise exception 'Patient id % does not exist.', pId;
+    end if;
+
+    -- update the patient
+    update public.patient set (
+        firstname, lastname, address, city, usstate, zip, referral
+    ) = (
+        jsonPatient->>'firstName',jsonPatient->>'lastName', jsonPatient->>'address',
+        jsonPatient->>'city', jsonPatient->>'usState',jsonPatient->>'zip',jsonPatient->>'referral'
+    ) where patientid=pId;
+
+    raise notice 'Updated pattient: %', pId;
 end
 $$
 language plpgsql;

@@ -1,26 +1,29 @@
 import React, {useState,setState} from 'react';
 import SelectUSState from 'react-select-us-states'
-import providerSvc from '../services/provider.js';
+import patientSvc from '../services/patient.js';
 
-import './profile.css';
+import './UpdatePatient.css';
 
-const Profile = (props) => {
-    const error=(!props)?"No props":
-        !props.provider?"No Provider":'';
-    if(error) {
-        return <div>{error}</div>;
+const UpdatePatient = (props) => {
+    if(!props||!props.providerid) {
+        return <div>Error: no provider</div>;
     }
-    const provider=props.provider;
-    const [firstName, setFirstName] = useState(provider.firstName);
-    const [lastName, setLastName] = useState(provider.lastName);
-    const [company, setCompany] = useState(provider.company);
-    const [address, setAddress] = useState(provider.address);
-    const [city, setCity] = useState(provider.city);
-    const [usState, setUsState] = useState(provider.usState);
-    const [zip, setZip] = useState(provider.zip);
-    const [password,setPassword] = useState(null);
-    const [confirmPassword,setConfirmPassword] = useState(null);
-    const [validate,setValidate] = useState({});
+    if(!props.patient) {
+        return <div>Error: no patient</div>;
+    }
+    const patient=props.patient;
+    const providerId=props.providerid;
+    const patientId=patient.patientId;
+    const [firstName, setFirstName] = useState(patient.firstName||'');
+    const [lastName, setLastName] = useState(patient.lastName||'');
+    const [referral, setReferral] = useState(patient.referral||'');
+    const [address, setAddress] = useState(patient.address||'');
+    const [city, setCity] = useState(patient.city||'');
+    const [usState, setUsState] = useState(patient.usState||'');
+    const [zip, setZip] = useState(patient.zip||'');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [validate, setValidate] = useState({});
 
     const handleInputChange = (e) => {
         const {id , value} = e.target;
@@ -29,9 +32,6 @@ const Profile = (props) => {
         }
         if(id === "lastName"){
             setLastName(value);
-        }
-        if(id === "company"){
-            setCompany(value);
         }
         if(id === "address"){
             setAddress(value);
@@ -42,35 +42,39 @@ const Profile = (props) => {
         if(id === "zip"){
             setZip(value);
         }
+        if(id === "referral"){
+            setReferral(value);
+        }
         if(id === "password"){
             setPassword(value);
         }
         if(id === "confirmPassword"){
             setConfirmPassword(value);
         }
-    };
+    }
 
     const changeUsState = (newUsState) => {
         setUsState(newUsState);
-    };
-
+    }
     const handleSubmit  = () => {
         const validatePassword=(password&&password!==confirmPassword)?{ border:'2px solid #cc0000'}:{};
         setValidate({validatePassword});
         if(Object.keys(validatePassword).length!==0) {
             return;
         }
-        const provInfo={providerId:props.provider.providerId,firstName:firstName,lastName:lastName,company:company,address:address,city:city,usState:usState,zip:zip};
+        
+        const pInfo={firstName:firstName,lastName:lastName,
+            address:address,city:city,usState:usState,zip:zip,
+            referral:referral
+        };
         if(password) {
-            provInfo.password=password;
+            pInfo.password=password;
         }
-        providerSvc.updateProvider(provInfo).then((el)=>{
-            console.log("Updated provider id: ",el);
-        }, (error) => {
-            //todo: set error and show below
-            return <div>{error.error}</div>;
+        
+        patientSvc.updatePatient(patientId,pInfo).then((el)=>{
+            console.log(el);
         });
-    };
+    }
 
     return (
         <div className="form">
@@ -80,7 +84,7 @@ const Profile = (props) => {
                     <label htmlFor="fname">First Name</label>
                   </div>
                   <div className="col-75">
-                    <input type="text" id="firstName" name="firstName" placeholder="First name.." value={firstName} onChange={handleInputChange}/>
+                    <input type="text" id="firstName" name="firstName" value={firstName} placeholder="First name.." onChange={handleInputChange}/>
                   </div>
                 </div>
                 <div className="row">
@@ -88,15 +92,7 @@ const Profile = (props) => {
                     <label htmlFor="lname">Last Name</label>
                   </div>
                   <div className="col-75">
-                    <input type="text" id="lastName" name="lastName" placeholder="Last name.."  value={lastName} onChange={handleInputChange}/>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-25">
-                    <label htmlFor="company">Company (if any)</label>
-                  </div>
-                  <div className="col-75">
-                    <input type="text" id="company" name="company" placeholder="company.."  value={company} onChange={handleInputChange}/>
+                    <input type="text" id="lastName" name="lastName" placeholder="Last name.." value={lastName} onChange={handleInputChange}/>
                   </div>
                 </div>
                 <div className="row">
@@ -118,7 +114,7 @@ const Profile = (props) => {
                     <label htmlFor="usState">State</label>
                   </div>
                   <div className="col-12">
-                    <SelectUSState id="usState" values={usState} onChange={changeUsState}/>
+                    <SelectUSState id="usState" value={usState} onChange={changeUsState}/>
                   </div>
                   <div className="col-12">
                     <label htmlFor="zip">Zip</label>
@@ -129,10 +125,18 @@ const Profile = (props) => {
                 </div>
                 <div className="row">
                   <div className="col-25">
+                    <label htmlFor="referral">Referral</label>
+                  </div>
+                  <div className="col-75">
+                    <input type="text" id="referral" name="referral" placeholder="referral.." value={referral} onChange={handleInputChange}/>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-25">
                     <label htmlFor="password">Password</label>
                   </div>
                   <div className="col-75">
-                    <input type="password"  id="password" name="password" placeholder="Password.." onChange={handleInputChange}  style={validate.validatePassword}/>
+                    <input type="password"  id="password" name="password" placeholder="Password.." onChange={handleInputChange} value={password} style={validate.validatePassword}/>
                   </div>
                 </div>
                 <div className="row">
@@ -140,16 +144,16 @@ const Profile = (props) => {
                     <label htmlFor="confirmPassword">Confirm password</label>
                   </div>
                   <div className="col-75">
-                    <input  type="password"  id="confirmPassword" name="confirmPassword" placeholder="Password.." onChange={handleInputChange} style={validate.validatePassword}/>
+                    <input  type="password"  id="confirmPassword" name="confirmPassword" placeholder="Password.." onChange={handleInputChange}  value={confirmPassword} style={validate.validatePassword}/>
                   </div>
                 </div>
             </div>
             <div className="footer">
-                <button onClick={handleSubmit} type="submit" className="btn">Update profile</button>
+                <button onClick={()=>handleSubmit()} type="submit" className="btn">Update patient</button>
             </div>
         </div>
 
     );
 };
 
-export default Profile;
+export default UpdatePatient;

@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author benoitmarsot
  */
 @RestController
-//@CrossOrigin(origins = "http://localhost:5173") //allows the debuggging of vite Reat on port 5173
+@CrossOrigin(origins = "http://localhost:5173") //allows the debuggging of vite Reat on port 5173
 @RequestMapping("api/pro")
 public class ProviderController {
 
@@ -33,7 +33,6 @@ public class ProviderController {
     private ProviderRepository providerRepository;
     
     @GetMapping("/assessment")
-    @CrossOrigin //allows the debuggging of Reat on port 5173
     public Assessment assessment(
         @RequestParam(value = "providerid", defaultValue = "1") int providerId,
         @RequestParam(value = "patientid", defaultValue = "1") int patientId
@@ -45,7 +44,6 @@ public class ProviderController {
         return assessmentMaybe.get();
     }
     @PutMapping("/assessment")
-    @CrossOrigin //allows the debuggging of vite Reat on port 5173
     public ResponseEntity<Integer> putAssement(
         @RequestParam(value = "providerid", defaultValue = "1") int providerId,
         @RequestParam(value = "patientid", defaultValue = "1") int patientId,
@@ -55,7 +53,6 @@ public class ProviderController {
         return ResponseEntity.ok(assesmentVersionId);
     }
     @PostMapping("/register")
-    @CrossOrigin //allows the debuggging of vite Reat on port 5173
     public ResponseEntity<Integer> register(
         @RequestBody Provider provider
     ) throws Exception {
@@ -63,7 +60,6 @@ public class ProviderController {
         return ResponseEntity.ok(providerId);
     }
     @PostMapping("/signin")
-    @CrossOrigin
     public ResponseEntity<Provider> signin(
         @RequestBody Credential credential
     ) throws Exception {
@@ -74,7 +70,6 @@ public class ProviderController {
        return ResponseEntity.ok(providerMaybe.get());
     }
     @PostMapping("/registerpatient")
-    @CrossOrigin
     public ResponseEntity<Integer> registerPatient(
         @RequestParam(value = "providerid", defaultValue = "1") int providerId,
         @RequestBody Patient patient
@@ -83,7 +78,6 @@ public class ProviderController {
         return ResponseEntity.ok(newPatientId);
     }
     @PostMapping("/updateprovider")
-    @CrossOrigin //allows the debuggging of vite Reat on port 5173
     public ResponseEntity<Integer> updateprovider(
         @RequestBody Provider provider
     ) throws Exception {

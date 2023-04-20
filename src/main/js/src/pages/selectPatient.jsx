@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import patientSvc from '../services/patient.js';
 
 const SelectPatient = (props) => {
     const error=(!props)?"No props":
@@ -9,12 +10,16 @@ const SelectPatient = (props) => {
     }
     const changePatient=props.onChangePatient;
     const handleChange = (event) => {
-        changePatient(event.target.value);
+        patientSvc.getPatient(event.target.value).then(patient => {
+            changePatient(patient);
+        });
     };
     const patients=props.provider.patients;
     const patientId=props.patientid||patients[0].patientId;
     useEffect(() => {
-        changePatient(patientId);
+        patientSvc.getPatient(patientId).then(patient => {
+            changePatient(patient);
+        });
     }, []);
     const po=[];
     for(let ind=0;ind<patients.length;ind++) {

@@ -23,7 +23,6 @@ CREATE TABLE IF NOT exists public.patient (
     rwuserid int not null,
     firstname varchar(50),
     lastname varchar(50),
-    company varchar(50),
     address varchar(200),
     city varchar(50),
     usstate varchar(25),

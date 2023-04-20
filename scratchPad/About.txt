@@ -1,0 +1,24 @@
+Reactwell the new Unbumpkin EHR for alternative health practionner. It allowed to create EHR that are assoiciated to a 2d model of the patients so all assessment are related to a specific part of the body.  Also react well keep track of the assessment change over time and allow for the provider and the patient to easily progress over time.
+
+At Unbumpkin we understand that being a alternative care professionnal is more of a vocation and that most of you are not making a ton of money, for that reasons at unbumpkin we will try to keep it free for the longuest time possible.  If you have a $ too much send it my way, I need-it.  
+
+With Reactwell you can:
+- Secure autoregister of new caregiver
+- Secure autoregister of new patient
+- enlist patients
+- allow patient login to see the  ehr and notes from the crae giver
+- allow caregiver to create EHR assessment, each note can be associated to a precise body position using a 2d model
+- wellreact keeps the historic of the assessment overtime it allow the patient and caregiver to see progress overtime
+- reactwell can print the present and past assessment 
+
+Reactwell is a fullstack application, created entierly by Benoit Marsot while he is trying to find a full stack position using:
+- Java
+- Spring boot
+- Spring security
+- ReactJS
+- PostgreSql
+It was built to showoff my ability to create a fullstak application with the current technologies
+
+
+
+
