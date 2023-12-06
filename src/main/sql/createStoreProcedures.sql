@@ -16,11 +16,13 @@ $$
         'usState', p.usstate,
         'zip', p.zip,
         'email', u.email,
-        'patients', json_agg(json_build_object(
-            'patientId',pp.patientid,
-            'firstName',pa.firstname,
-            'lastName',pa.lastname
-        ))
+        'patients', case when max(pa.patientid) is null then '[]' else 
+	        json_agg(json_build_object(
+	            'patientId',pp.patientid,
+	            'firstName',pa.firstname,
+	            'lastName',pa.lastname
+	        ))
+	    end
     )
     from public.provider p
         inner join public.rwuser u on p.rwuserid = u.rwuserid
