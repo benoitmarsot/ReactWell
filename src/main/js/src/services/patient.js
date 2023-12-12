@@ -8,15 +8,18 @@ const updatePatient = function(patientId,patient) {
     return http.post('/api/patient/updatepatient?patientid='+patientId, patient, null);
 };
 const getPatient = function( patientId) {
-    
     const patient=http.get('/api/patient/getpatient?patientid='+patientId, null);
     return patient;
+};
+const signIn = function(credential) {
+    return http.post('/api/patient/signin', credential, null);
 };
 
 export default {
     register: register,
     updatePatient: updatePatient,
-    getPatient:getPatient
+    getPatient:getPatient,
+    signIn:signIn
 };
 
 

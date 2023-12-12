@@ -1,17 +1,17 @@
-import React, {useState,setState} from 'react';
+import React, {useState,setState,useContext} from 'react';
 import SelectUSState from 'react-select-us-states'
 import patientSvc from '../services/patient.js';
-
+import { PatientContext } from '../App.jsx';
 import './UpdatePatient.css';
 
 const UpdatePatient = (props) => {
+    const {patient} = useContext(PatientContext);
     if(!props||!props.providerid) {
         return <div>Error: no provider</div>;
     }
-    if(!props.patient) {
+    if(!patient) {
         return <div>Error: no patient</div>;
     }
-    const patient=props.patient;
     const providerId=props.providerid;
     const patientId=patient.patientId;
     const [firstName, setFirstName] = useState(patient.firstName||'');
@@ -24,7 +24,7 @@ const UpdatePatient = (props) => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [validate, setValidate] = useState({});
-
+    let pInfo={};
     const handleInputChange = (e) => {
         const {id , value} = e.target;
         if(id === "firstName"){
@@ -63,9 +63,10 @@ const UpdatePatient = (props) => {
             return;
         }
         
-        const pInfo={firstName:firstName,lastName:lastName,
+        pInfo={firstName:firstName,lastName:lastName,
             address:address,city:city,usState:usState,zip:zip,
-            referral:referral
+            referral:referral,patientId:patient.patientId,
+            rwuserId:patient.rwuserId
         };
         if(password) {
             pInfo.password=password;
@@ -73,6 +74,7 @@ const UpdatePatient = (props) => {
         
         patientSvc.updatePatient(patientId,pInfo).then((el)=>{
             console.log(el);
+            props.onChangePatient(pInfo);
         });
     }
 

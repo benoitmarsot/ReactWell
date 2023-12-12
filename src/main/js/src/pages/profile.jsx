@@ -1,16 +1,16 @@
-import React, {useState,setState} from 'react';
+import React, {useState,setState, useContext} from 'react';
 import SelectUSState from 'react-select-us-states'
 import providerSvc from '../services/provider.js';
+import { ProviderContext } from '../App.jsx';
 
 import './profile.css';
 
 const Profile = (props) => {
-    const error=(!props)?"No props":
-        !props.provider?"No Provider":'';
+    const {provider} = useContext(ProviderContext);
+    const error=!provider?"No Provider":'';
     if(error) {
         return <div>{error}</div>;
     }
-    const provider=props.provider;
     const [firstName, setFirstName] = useState(provider.firstName);
     const [lastName, setLastName] = useState(provider.lastName);
     const [company, setCompany] = useState(provider.company);
@@ -21,6 +21,7 @@ const Profile = (props) => {
     const [password,setPassword] = useState(null);
     const [confirmPassword,setConfirmPassword] = useState(null);
     const [validate,setValidate] = useState({});
+    let provInfo={};
 
     const handleInputChange = (e) => {
         const {id , value} = e.target;
@@ -60,14 +61,16 @@ const Profile = (props) => {
         if(Object.keys(validatePassword).length!==0) {
             return;
         }
-        const provInfo={providerId:props.provider.providerId,firstName:firstName,lastName:lastName,company:company,address:address,city:city,usState:usState,zip:zip};
+        provInfo={providerId:provider.providerId,firstName:firstName,lastName:lastName,company:company,address:address,city:city,usState:usState,zip:zip};
         if(password) {
             provInfo.password=password;
         }
         providerSvc.updateProvider(provInfo).then((el)=>{
             console.log("Updated provider id: ",el);
+            //Update the provider with the new info using provInfo
+            props.onChangeProvider(provInfo);
         }, (error) => {
-            //todo: set error and show below
+            //set error and show below
             return <div>{error.error}</div>;
         });
     };

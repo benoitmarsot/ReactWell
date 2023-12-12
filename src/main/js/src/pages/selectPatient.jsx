@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import patientSvc from '../services/patient.js';
+import { ProviderContext } from '../App.jsx';
 
 const SelectPatient = (props) => {
-    const error=(!props)?"No props":
-            !props.provider?"No Provider":
-            !props.provider.patients?"No clients":'';
+    const {provider} = useContext(ProviderContext);
+    console.log("selectPatient: ",provider);
+    const error=!provider?"No Provider":
+            !provider.patients.length?"No clients":'';
     if(error) {
         return <div>{error}</div>;
     }
@@ -14,7 +16,7 @@ const SelectPatient = (props) => {
             changePatient(patient);
         });
     };
-    const patients=props.provider.patients;
+    const patients=provider.patients;
     const patientId=props.patientid||patients[0].patientId;
     useEffect(() => {
         patientSvc.getPatient(patientId).then(patient => {

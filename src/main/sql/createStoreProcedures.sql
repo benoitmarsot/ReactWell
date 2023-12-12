@@ -21,7 +21,7 @@ $$
 	            'patientId',pp.patientid,
 	            'firstName',pa.firstname,
 	            'lastName',pa.lastname
-	        ))
+	        ) ORDER BY pa.firstname, pa.lastname DESC)
 	    end
     )
     from public.provider p
@@ -30,6 +30,42 @@ $$
         left join public.patient pa on pp.patientid=pa.patientid 
     where u.email=$1->>'email' and u.rwpassword=$1->>'password'
     group by p.providerid, u.email
+    ;
+$$
+language sql;
+-- Functions
+-- patient sign in
+-- arg {email:un,password:pw}
+-- sample: select patientsignin('{"email":"provemail@hotmail.com","password":"password"}');
+create or replace FUNCTION patientsignin(json) 
+RETURNS json AS 
+$$
+   select json_build_object(
+        'patientId', p.patientid,
+        'rwuserId', p.rwuserid,
+        'firstName', p.firstname,
+        'lastName', p.lastname,
+        'company', p.company,
+        'address', p.address,
+        'city' , p.city,
+        'usState', p.usstate,
+        'zip', p.zip,
+        'referral', p.referral,
+        'email', u.email,
+        'providers', case when max(pr.providerid) is null then '[]' else 
+	        json_agg(json_build_object(
+	            'providerId',pp.providerid,
+	            'firstName',pr.firstname,
+	            'lastName',pr.lastname
+	        ) ORDER BY pr.firstname, pr.lastname DESC)
+	    end
+    )
+    from public.patient p
+        inner join public.rwuser u on p.rwuserid = u.rwuserid
+        left join public.providerpatient pp on p.patientid=pp.patientid
+        left join public.provider pr on pp.providerid=pr.providerid 
+    where u.email=$1->>'email' and u.rwpassword=$1->>'password'
+    group by p.patientid, u.email
     ;
 $$
 language sql;
@@ -55,6 +91,31 @@ $$
     from public.patient p
         inner join public.rwuser u on p.rwuserid = u.rwuserid
     where p.patientid=pId
+    ;
+$$
+language sql;
+-- get provider id
+-- args: 
+-- - providerId: patient id integer
+-- sample: select getprovider(1);
+create or replace FUNCTION getprovider(pId int ) 
+RETURNS json AS 
+$$
+    select json_build_object(
+        'providerId', p.providerid,
+        'userId', p.rwuserid,
+        'firstName', p.firstname,
+        'lastName', p.lastname,
+        'company', p.company,
+        'address', p.address,
+        'city' , p.city,
+        'usState', p.usstate,
+        'zip', p.zip,
+        'email', u.email
+    )
+    from public.provider p
+        inner join public.rwuser u on p.rwuserid = u.rwuserid
+    where p.providerid=pId
     ;
 $$
 language sql;

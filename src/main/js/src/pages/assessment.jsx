@@ -2,7 +2,6 @@ import React from 'react';
 //I would like to get it with root path /services/provider.js
 import providerSvc from '../services/provider.js';
 import assessmentSvc from '../services/assessment.js';
-import bodyDiagram from '/images/bodydiagram.jpeg';
 
 class Assessment extends React.Component {
     constructor(props) {
@@ -11,13 +10,15 @@ class Assessment extends React.Component {
             mousePos:{},
             bulletId:0,
             texts:[],
+            note:'',
             saved:false,
-            curVersion: 0
+            currentIndex: 0
         };
+        this.isPatientPortal=props.isPatientPortal;
         this.providerId=props.providerid;
         this.patientId=props.patientid;
         this.assessmentDoc=null;
-        this.maxVersion=0;
+        this.currentIndex=0;
         
         this.handleMove = (event) => {
             const c = document.getElementById("myCanvas");
@@ -28,8 +29,10 @@ class Assessment extends React.Component {
         };
         this.handleClick = (event) => {
             const texts=this.state.texts;
-            texts[this.state.bulletId]={fromPos:{x:this.state.mousePos.x, y:this.state.mousePos.y}};
-            this.setState({texts:texts,saved:false,bulletId:this.state.bulletId+1});
+            if(!this.isPatientPortal) {
+                texts[this.state.bulletId]={fromPos:{x:this.state.mousePos.x, y:this.state.mousePos.y}};
+                this.setState({texts:texts,saved:false,bulletId:this.state.bulletId+1});
+            }
         };
         this.handleSubmit= (event) => {
             const assessDoc=this.buildAssesmentDoc();
@@ -61,7 +64,7 @@ class Assessment extends React.Component {
         }
         //Should add a note field
         const assessDoc={'assessmentId':0,'providerId':this.providerId,'patientId':this.patientId,
-            'assessmentVersions':[{'assessmentVersionId':0,'note':'firstNote'}],
+            'assessmentVersions':[{'assessmentVersionId':0,'note':this.state.note}],
             'bodyQuestions': bodyQuestions
         };
         return assessDoc;
@@ -73,9 +76,9 @@ class Assessment extends React.Component {
             if(!assDoc.bodyQuestions) {
                 return;
             }
+            this.currentIndex=assDoc.assessmentVersions.length-1;
             assDoc.bodyQuestions.forEach((bq)=>{
                 const vId=(bq.versionTexts)?bq.versionTexts[0].assessmentVersionId:0;
-                this.maxVersion=vId>this.maxVersion?vId:this.maxVersion;
 
                 lTexts[bq.bodyQuestionId-1]={
                     fromPos:{x:bq.x, y:bq.y},
@@ -87,7 +90,9 @@ class Assessment extends React.Component {
                 saved:true, 
                 bulletId:assDoc.bodyQuestions.length,
                 texts:lTexts,
-                curVersion: this.maxVersion
+                note:assDoc.assessmentVersions[this.currentIndex].note,
+                noteDate:assDoc.assessmentVersions[this.currentIndex].serviceDate,
+                currentIndex: this.currentIndex
             });
             this.showQuestions();
         }, reject => {
@@ -112,15 +117,17 @@ class Assessment extends React.Component {
         const self=this;
         function navigate(events) {
             const dir=events.target.name;
-            const nv=parseInt(self.state.curVersion)+parseInt(dir);
-            if(nv<0 || nv>self.maxVersion+1) {
+            const nv=parseInt(self.state.currentIndex)+parseInt(dir);
+            if(nv<0||nv>=self.assessmentDoc.assessmentVersions.length) {
                 return ;
             }
+            const maxVersion=self.assessmentDoc.assessmentVersions[nv].assessmentVersionId;
             const lTexts=[];
+
             self.assessmentDoc.bodyQuestions.forEach((bq)=>{
                 if(bq.versionTexts) {
                     for(let ind=0;ind<bq.versionTexts.length;ind++) {
-                        if(bq.versionTexts[ind].assessmentVersionId<=nv) {
+                        if(bq.versionTexts[ind].assessmentVersionId<=maxVersion) {
                             lTexts[bq.bodyQuestionId-1]={
                                 fromPos:{x:bq.x, y:bq.y},
                                 text:bq.versionTexts[ind].content||''
@@ -141,14 +148,26 @@ class Assessment extends React.Component {
                     };
                 }
             });
-            self.setState({curVersion:nv,texts:lTexts});
+            self.setState({currentIndex:nv,texts:lTexts,note:self.assessmentDoc.assessmentVersions[nv].note,
+                noteDate:self.assessmentDoc.assessmentVersions[nv].serviceDate});
+                
         }
         const label=props.direction>0?'Next':'previous';
         return (
             <button onClick={navigate} name={props.direction}>{label}</button>
         );
     }
-    
+    showVersionNotes(props) {
+        const self=this;
+        const text=props.text;
+        function handleDiaChanges(event) {
+            self.state.note=event.target.value;
+            self.setState({saved:false,note:self.state.note});
+        };
+        return (
+            <textarea placeholder='Visit notes' rows='5' width='40' value={text} onChange={handleDiaChanges} />
+        );
+    }
     DiagnosesQ(props) {
         const self=this;
         function handleDiaChanges(event) {
@@ -165,7 +184,7 @@ class Assessment extends React.Component {
             const text=props.texts[ind].text||'';
             rows.push(<tr key={ind+1}>
                 <td><b>{ind+1}.</b></td>
-                <td><input type='text' size='70' onChange={handleDiaChanges} name={ind+1} value={text}/></td>
+                <td><input type='text' readOnly={this.isPatientPortal} size='70' onChange={handleDiaChanges} name={ind+1} value={text}/></td>
             </tr>);
         }
         return (
@@ -219,15 +238,18 @@ class Assessment extends React.Component {
         return this.providerId?(
             <div>
                 <h1>Health Questionnaire</h1>
-                navigation: {this.Goto({direction:1})}{this.Goto({direction:-1})}
-                The mouse is at position{' '}
+                {this.Goto({direction:-1})}{this.Goto({direction:1})} {this.state.noteDate}
+                {/* The mouse is at position{' '}
                 <b>
                   {(Math.round( this.state.mousePos.x * 100) / 100).toFixed(2)},{(Math.round( this.state.mousePos.y * 100) / 100).toFixed(2)}
-                </b>
+                </b> */}
                 <br/>
                 <table>
                     <tbody>
-                        <tr><td>
+                    <tr>
+                        <td>{this.showVersionNotes({text:this.state.note})}</td><td></td>
+                    </tr><tr>
+                        <td>
                             <canvas id='myCanvas' 
                                 width='516' height='507'
                                 onMouseMove={this.handleMove} onClick={this.handleClick}
@@ -236,16 +258,20 @@ class Assessment extends React.Component {
                                 }}
                             />
                         </td><td>
-                            Provider: {this.providerId}<br/>
-                            patient: {this.patientId}
+                            {/* Provider: {this.providerId}<br/>
+                            patient: {this.patientId} */}
                         </td></tr>
                     </tbody>
                 </table>
 
                 <this.showQuestions texts={this.state.texts} />
                 {this.DiagnosesQ({rowcount:this.state.bulletId,texts:this.state.texts})}
-                <this.DiagnosesA rowcount={this.state.bulletId} texts={this.state.texts}/>
-                <button onClick={this.handleSubmit} >Submit</button>
+                {/* <this.DiagnosesA rowcount={this.state.bulletId} texts={this.state.texts}/> */}
+                {!this.isPatientPortal? (
+                    <button onClick={this.handleSubmit} >Submit</button>
+                ):(
+                    ''
+                )}
                 {this.showSaved()}
             </div>
         ):(

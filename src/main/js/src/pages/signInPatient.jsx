@@ -1,15 +1,16 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import providerSvc from '../services/provider.js';
+import patientSvc from '../services/patient.js';
 
 import './signup.css';
 
-const SignIn = (props) => {
+const SignInPatient = (props) => {
     const navigate=useNavigate();
     const [email, setEmail] = useState(null);
     const [password,setPassword] = useState(null);
     const [errorMsg,setErrorMsg] = useState(null);
-    const onChangeProvider=props.onChangeProvider;
+    const onChangePatient=props.onChangePatient;
+    const onSetPatientPortal=props.onSetPatientPortal;
     const handleInputChange = (e) => {
         const {id , value} = e.target;
         if(id === "email"){
@@ -22,19 +23,16 @@ const SignIn = (props) => {
 
     const handleSubmit  = (e) => {
         e.preventDefault();
-        const provInfo={email:email,password:password};
-        providerSvc.signIn(provInfo).then((provider)=>{
-            if(provider.status===401) {
-                setErrorMsg(provider.title);
+        const patientInfo={email:email,password:password};
+        patientSvc.signIn(patientInfo).then((patient)=>{
+            if(patient.status===401) {
+                setErrorMsg(patient.title);
                 return;
             }
-            console.log(provider);
-            onChangeProvider(provider); 
-            if(provider.patients.length) {
-                return navigate('/selectpatient');
-            } else {
-                return navigate('/createpatient');
-            }
+            console.log(patient);
+            onSetPatientPortal(true);
+            onChangePatient(patient); 
+            return navigate('/selectprovider');
         }, (error) => {
             setErrorMsg(!error.error?error:error.error);
         });
@@ -76,4 +74,4 @@ const SignIn = (props) => {
     );
 };
 
-export default SignIn;
+export default SignInPatient;

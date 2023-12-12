@@ -1,10 +1,13 @@
 import React, {useState,setState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import SelectUSState from 'react-select-us-states'
 import providerSvc from '../services/provider.js';
 
 import './signup.css';
 
 const SignUp = () => {
+    const navigate=useNavigate();
+
     const [firstName, setFirstName] = useState(null);
     const [lastName, setLastName] = useState(null);
     const [company, setCompany] = useState(null);
@@ -62,6 +65,7 @@ const SignUp = () => {
         const provInfo={firstName:firstName,lastName:lastName,company:company,address:address,city:city,usState:usState,zip:zip, email:email,password:password};
         providerSvc.register(provInfo).then((el)=>{
             console.log("Registered new provider id: ",el);
+            return navigate('/signin');
         }, (error) => {
             return <div>{error.error}</div>;
         });
